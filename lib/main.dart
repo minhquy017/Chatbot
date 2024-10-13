@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
+import 'package:firebase_database/firebase_database.dart'; // Import Firebase Realtime Database
 import 'package:chat_bot_flutter/SplashScreen.dart';
 import 'package:chat_bot_flutter/WelcomeScreen.dart';
 import 'package:chat_bot_flutter/SignUpScreen.dart';
@@ -8,7 +9,16 @@ import 'package:chat_bot_flutter/LoginScreen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Đảm bảo rằng các widget đã được khởi tạo
   await Firebase.initializeApp(); // Khởi tạo Firebase
+  // Khởi tạo Firebase Realtime Database
+  final databaseReference = FirebaseDatabase.instance.reference();
+  // Nếu bạn muốn thêm dữ liệu mẫu (tuỳ chọn)
+  // databaseReference.child("test").set({"message": "Hello, Firebase!"});
+
   runApp(MyApp());
+}
+
+extension on FirebaseDatabase {
+  reference() {}
 }
 
 class MyApp extends StatelessWidget {

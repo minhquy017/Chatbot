@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart'; // Thêm thư viện Firebase Realtime Database
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -11,7 +12,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool agreeToTerms = false;
-  bool isPasswordVisible = false; // Trạng thái hiển thị mật khẩu
+  bool isPasswordVisible = false;
+
+  final DatabaseReference _database = FirebaseDatabase.instance.ref(); // Khởi tạo DatabaseReference
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(context); // Thực hiện hành động trở về
+              Navigator.pop(context);
             },
           ),
         ),
@@ -119,9 +122,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF4E0189),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0), // Bo tròn góc
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 150, vertical: 15), // Điều chỉnh kích thước nút
+                  padding: EdgeInsets.symmetric(horizontal: 150, vertical: 15),
                 ),
                 child: Text('Sign Up', style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'Poppins')),
               ),
@@ -144,17 +147,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   _buildSocialButton(FaIcon(FontAwesomeIcons.google, color: Color(0xFF4285F4)), () {
                     print('Google button pressed');
                   }, width: 120),
-                  SizedBox(width: 15), // Space between buttons
+                  SizedBox(width: 15),
                   _buildSocialButton(Icon(Icons.apple, color: Colors.black), () {
                     print('Apple button pressed');
                   }, width: 120),
-                  SizedBox(width: 15), // Space between buttons
+                  SizedBox(width: 15),
                   _buildSocialButton(Icon(Icons.facebook, color: Colors.blue), () {
                     print('Facebook button pressed');
                   }, width: 120),
                 ],
               ),
-              Spacer(), // Đây là điểm quan trọng để đẩy phần bên dưới xuống
+              Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -180,10 +183,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Phương thức để thực hiện đăng ký người dùng với Firebase
   Future<void> _signUp() async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
+
+      // Lưu thông tin người dùng vào Realtime Database
+      await _database.child("users").child(userCredential.user!.uid).set({
+        'email': emailController.text,
+        'createdAt': DateTime.now().toString(),
+      });
 
       // Hiển thị thông báo đăng ký thành công
       showDialog(
@@ -226,17 +235,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Phương thức để xây dựng nút xã hội với chiều rộng cụ thể
   Widget _buildSocialButton(Widget icon, VoidCallback onPressed, {required double width}) {
     return SizedBox(
-      width: width, // Sử dụng SizedBox để cố định chiều rộng
+      width: width,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0), // Bo tròn góc
+            borderRadius: BorderRadius.circular(30.0),
           ),
-          padding: EdgeInsets.symmetric(vertical: 15), // Điều chỉnh chiều cao
+          padding: EdgeInsets.symmetric(vertical: 15),
           side: BorderSide(color: Color(0xFFE3E3E3), width: 2.0),
         ),
         onPressed: onPressed,
-        child: icon, // Không đặt màu để giữ nguyên màu gốc
+        child: icon,
       ),
     );
   }
@@ -252,21 +261,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
       obscureText: isPassword && !isPasswordVisible,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(fontFamily: 'Poppins'), // Thêm font Poppins vào label
+        labelStyle: TextStyle(fontFamily: 'Poppins'),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0), // Bo tròn góc
-          borderSide: BorderSide(color: Color(0xFFC6C6C6), width: 2.0), // Màu viền và độ dày
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide(color: Color(0xFFC6C6C6), width: 2.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0), // Bo tròn góc
-          borderSide: BorderSide(color: Color(0xFFC6C6C6), width: 2.0), // Màu viền và độ dày khi không được chọn
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide(color: Color(0xFFC6C6C6), width: 2.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide(color: Color(0xFF4E0189), width: 2.0),
         ),
         suffixIcon: isPassword
             ? IconButton(
-          icon: Icon(
-            isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-            color: Color(0xFF999EA1),
-          ),
+          icon: Icon(isPasswordVisible ? Icons.visibility : Icons.visibility_off),
           onPressed: () {
             setState(() {
               isPasswordVisible = !isPasswordVisible;
@@ -275,6 +285,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         )
             : null,
       ),
+      style: TextStyle(fontFamily: 'Poppins'),
     );
   }
 }
