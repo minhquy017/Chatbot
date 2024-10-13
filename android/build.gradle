@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.3.0' // Thay x.x bằng phiên bản Gradle của bạn, ví dụ '7.3.1'
+        classpath 'com.google.gms:google-services:4.4.2' // Thay x.x bằng phiên bản plugin Firebase của bạn, ví dụ '4.3.15'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
