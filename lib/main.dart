@@ -5,14 +5,14 @@ import 'package:chat_bot_flutter/SplashScreen.dart';
 import 'package:chat_bot_flutter/WelcomeScreen.dart';
 import 'package:chat_bot_flutter/SignUpScreen.dart';
 import 'package:chat_bot_flutter/LoginScreen.dart';
+import 'package:chat_bot_flutter/HomeChatScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Đảm bảo rằng các widget đã được khởi tạo
   await Firebase.initializeApp(); // Khởi tạo Firebase
   // Khởi tạo Firebase Realtime Database
   final databaseReference = FirebaseDatabase.instance.reference();
-  // Nếu bạn muốn thêm dữ liệu mẫu (tuỳ chọn)
-  // databaseReference.child("test").set({"message": "Hello, Firebase!"});
+
 
   runApp(MyApp());
 }
@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/Welcome': (context) => WelcomeScreen(),
         '/SignUp': (context) => SignUpScreen(),
         '/Login': (context) => LoginScreen(),
+        '/HomeChat':(contet) => HomeChatScreen(),
       },
     );
   }

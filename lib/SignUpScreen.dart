@@ -124,7 +124,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 150, vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 170, vertical: 15),
                 ),
                 child: Text('Sign Up', style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'Poppins')),
               ),
@@ -194,21 +194,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'createdAt': DateTime.now().toString(),
       });
 
-      // Hiển thị thông báo đăng ký thành công
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Success'),
-            content: Text('Sign Up Successful!'),
-          );
-        },
-      );
-
-      // Chuyển sang màn hình LoginScreen sau 2 giây
-      Future.delayed(Duration(seconds: 2), () {
-        Navigator.pushReplacementNamed(context, '/Login');
-      });
+      // Gọi hàm hiển thị dialog thành công
+      _showSuccessDialog();
     } on FirebaseAuthException catch (e) {
       String errorMessage;
       if (e.code == 'weak-password') {
@@ -226,11 +213,71 @@ class _SignUpScreenState extends State<SignUpScreen> {
           return AlertDialog(
             title: Text('Error'),
             content: Text(errorMessage),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Đóng dialog
+                },
+                child: Text('OK'),
+              ),
+            ],
           );
         },
       );
     }
   }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Không cho phép đóng dialog khi nhấn bên ngoài
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.check_circle, size: 70, color: Color(0xFF4E0189)), // Biểu tượng thành công
+                SizedBox(height: 20),
+                Text(
+                  'Sign Up Successful!',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF4E0189),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Please wait...\nYou will be directed to Login.',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                CircularProgressIndicator(), // Vòng xoay để thể hiện đang tải
+                SizedBox(height: 20),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    // Chuyển sang màn hình LoginScreen sau 2 giây
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.pushReplacementNamed(context, '/Login');
+    });
+  }
+
 
   // Phương thức để xây dựng nút xã hội với chiều rộng cụ thể
   Widget _buildSocialButton(Widget icon, VoidCallback onPressed, {required double width}) {
