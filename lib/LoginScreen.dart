@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
-        '/chat': (context) => ChatScreen(), // Thay ChatScreen bằng màn hình chat của bạn
+        '/chat': (context) => ChatScreen(),
       },
     );
   }
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.lock, size: 70, color: Color(0xFF4E0189)), // Biểu tượng thành công
+                Icon(Icons.check_circle, size: 70, color: Color(0xFF4E0189)), // Biểu tượng thành công
                 SizedBox(height: 20),
                 Text(
                   'Login Successful!',
@@ -217,6 +217,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(fontSize: 12, fontFamily: 'Poppins'),
                   ),
                 ),
+                Spacer(),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pushNamed(context, '/reset-password');
+                  },
+                  child: Text(
+                    'Forgot Password?',style: TextStyle(color: Color(0xFFFB344F),
+                      fontSize: 12,
+                      fontFamily: 'Poppins'),
+                  ),
+                )
               ],
             ),
             SizedBox(height: 20),

@@ -6,7 +6,7 @@ import 'package:chat_bot_flutter/WelcomeScreen.dart';
 import 'package:chat_bot_flutter/SignUpScreen.dart';
 import 'package:chat_bot_flutter/LoginScreen.dart';
 import 'package:chat_bot_flutter/HomeChatScreen.dart';
-
+import 'package:chat_bot_flutter/ResetPasswordScreen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Đảm bảo rằng các widget đã được khởi tạo
   await Firebase.initializeApp(); // Khởi tạo Firebase
@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/SignUp': (context) => SignUpScreen(),
         '/Login': (context) => LoginScreen(),
         '/HomeChat':(contet) => HomeChatScreen(),
+        '/reset-password':(context) => ResetPasswordScreen(),
       },
     );
   }
